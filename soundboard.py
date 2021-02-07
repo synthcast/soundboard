@@ -1,13 +1,12 @@
-from playsound import playsound
 import tkinter as tk
 from tkinter import *
 from selenium import webdriver
-from webdriver_manager.chrome import ChromeDriverManager
-
+from webdriver_manager.firefox import GeckoDriverManager
+import subprocess
 
 root = tk.Tk()
 links = []
-root.counter = 0
+root.counter = 1
 
 root.title("Music Player")
 
@@ -22,45 +21,19 @@ def Link():
     link = 'https://www.youtube.com/results?search_query='
     hello = (f"{link}{search}")
     print(hello)
-    driver = webdriver.Chrome(ChromeDriverManager().install())
+    firefox = webdriver.FirefoxOptions()
+    firefox.add_argument('--disable-notifications')
+    firefox.add_argument("--headless")
+    driver = webdriver.Firefox(executable_path=GeckoDriverManager().install(), options=firefox)
     driver.get(hello)
     xpath = '//*[@id="video-title"]'
     btn = driver.find_element_by_xpath(xpath)
     btn.click()
+    print (driver.current_url)
+    url = (driver.current_url)
+    driver.close()
+    subprocess.call(["mpv", url])
     links.append(hello)
-    for app in links:
-        label = tk.Button(frame, text=app, bg="gray", command=lambda:[Prev(), Save()])
-        label.pack()
-
-
-def Prev():
-    search = e.get()
-    link = 'https://www.youtube.com/results?search_query='
-    hello = (f"{link}{search}")
-    print(hello)
-    driver = webdriver.Chrome(ChromeDriverManager().install())
-    driver.get(hello)
-    xpath = '//*[@id="video-title"]'
-    btn = driver.find_element_by_xpath(xpath)
-    btn.click()
-
-
-def Save():
-    search = e.get()
-    link = 'https://www.youtube.com/results?search_query='
-    hello = (f"{link}{search}\n")
-    root.counter +=1
-    f = open("save.txt", "a")
-    f.write(hello)
-    f.close()
-    f.open("save.txt", 'r')
-    f.readlines()
-
-
-
-
-
-
 
 ##linkButton
 Link = tk.Button(root, text="Search", padx=10,
@@ -83,13 +56,8 @@ frame = tk.Frame(root, height=30, width=300, bg="#263D42")
 frame.pack()
 
 
-##playsound('D:\csgosoundboard\deathgift_drop.mp3')
-
 root.mainloop()
 
 
-##with open('save.txt', 'a') as f:
-        ##for app in links:
-            ##f.write(app + '\n')
 
 
